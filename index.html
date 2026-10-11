@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CartWise — Smart Shopping Budget Planner</title>
+    <meta
+      name="description"
+      content="Plan your shopping list, estimate costs, and stay within budget with CartWise."
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="site-header">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" width="32" height="32" focusable="false">
+              <rect x="3" y="8" width="26" height="16" rx="5" fill="currentColor" />
+              <circle cx="11" cy="24" r="2.5" fill="#f4faf6" />
+              <circle cx="22" cy="24" r="2.5" fill="#f4faf6" />
+              <path
+                d="M7 12h15l-1.2 7H10.2L7 12z"
+                fill="#f4faf6"
+                opacity="0.9"
+              />
+            </svg>
+          </span>
+          <div>
+            <p class="eyebrow">Shopping planner</p>
+            <h1>CartWise</h1>
+          </div>
+        </div>
+        <p class="tagline">
+          Build your list, estimate the bill, and keep every trip within budget.
+        </p>
+      </header>
+
+      <div id="status-region" class="status-region" role="status" aria-live="polite"></div>
+
+      <section class="summary-grid" aria-label="Budget summary">
+        <article class="summary-card highlight">
+          <p class="summary-label">Shopping budget</p>
+          <p id="summary-budget" class="summary-value">₹0.00</p>
+        </article>
+        <article class="summary-card">
+          <p class="summary-label">Estimated spending</p>
+          <p id="summary-estimated" class="summary-value">₹0.00</p>
+        </article>
+        <article class="summary-card remaining-card">
+          <p class="summary-label">Remaining balance</p>
+          <p id="summary-remaining" class="summary-value">₹0.00</p>
+        </article>
+        <article class="summary-card">
+          <p class="summary-label">Items in list</p>
+          <p id="summary-count" class="summary-value">0</p>
+        </article>
+      </section>
+
+      <section class="card progress-card" aria-label="Budget and shopping progress">
+        <div class="progress-head">
+          <h2>Budget usage</h2>
+          <p id="budget-status-text" class="progress-caption">Set a budget to start tracking.</p>
+        </div>
+        <div
+          class="progress-track"
+          role="progressbar"
+          aria-labelledby="budget-progress-label"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          id="budget-progress"
+        >
+          <span id="budget-progress-fill" class="progress-fill"></span>
+        </div>
+        <p id="budget-progress-label" class="sr-only">Budget used</p>
+
+        <div class="completion-row">
+          <div>
+            <h3>Shopping progress</h3>
+            <p id="completion-text" class="progress-caption">No items yet.</p>
+          </div>
+          <p id="completion-percent" class="completion-percent">0%</p>
+        </div>
+        <div
+          class="progress-track slim"
+          role="progressbar"
+          aria-label="Shopping completion"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          id="completion-progress"
+        >
+          <span id="completion-progress-fill" class="progress-fill completion"></span>
+        </div>
+      </section>
+
+      <div class="layout">
+        <section class="card" aria-labelledby="budget-heading">
+          <h2 id="budget-heading">Budget &amp; currency</h2>
+          <p class="section-copy">
+            Set a spending limit and choose how prices should appear.
+          </p>
+          <form id="budget-form" novalidate>
+            <div class="field-row">
+              <div class="field">
+                <label for="budget-input">Shopping budget</label>
+                <input
+                  id="budget-input"
+                  name="budget"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  inputmode="decimal"
+                  placeholder="e.g. 2500"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="currency-select">Currency</label>
+                <select id="currency-select" name="currency">
+                  <option value="INR" selected>INR (₹)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="JPY">JPY (¥)</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Update budget</button>
+          </form>
+        </section>
+
+        <section class="card" aria-labelledby="item-heading">
+          <h2 id="item-heading">Add to your list</h2>
+          <p class="section-copy" id="item-form-help">
+            Enter a product, unit price, and quantity. You can edit an item later.
+          </p>
+          <form id="item-form" novalidate>
+            <input type="hidden" id="item-id" value="" />
+            <div class="field">
+              <label for="item-name">Product name</label>
+              <input
+                id="item-name"
+                name="name"
+                type="text"
+                maxlength="80"
+                autocomplete="off"
+                placeholder="e.g. Basmati rice"
+                required
+              />
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="item-price">Unit price</label>
+                <input
+                  id="item-price"
+                  name="price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  inputmode="decimal"
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="item-quantity">Quantity</label>
+                <input
+                  id="item-quantity"
+                  name="quantity"
+                  type="number"
+                  min="1"
+                  step="1"
+                  inputmode="numeric"
+                  placeholder="1"
+                  required
+                />
+              </div>
+            </div>
+            <div class="button-row">
+              <button type="submit" class="btn btn-primary" id="item-submit">
+                Add item
+              </button>
+              <button type="button" class="btn btn-ghost" id="item-cancel" hidden>
+                Cancel edit
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <section class="card list-card" aria-labelledby="list-heading">
+        <div class="list-header">
+          <div>
+            <h2 id="list-heading">Shopping list</h2>
+            <p class="section-copy">
+              Mark items as purchased as you shop. Totals update instantly.
+            </p>
+          </div>
+          <div class="list-actions">
+            <button type="button" class="btn btn-secondary" id="load-sample">
+              Load sample list
+            </button>
+            <button type="button" class="btn btn-danger" id="clear-list">
+              Clear list
+            </button>
+          </div>
+        </div>
+
+        <div id="clear-confirm" class="confirm-banner" hidden>
+          <p>Clear every item from this shopping list? This cannot be undone.</p>
+          <div class="button-row">
+            <button type="button" class="btn btn-danger" id="confirm-clear">
+              Yes, clear list
+            </button>
+            <button type="button" class="btn btn-ghost" id="cancel-clear">
+              Keep list
+            </button>
+          </div>
+        </div>
+
+        <div id="empty-state" class="empty-state">
+          <p class="empty-title">Your cart is empty</p>
+          <p>
+            Add your first product above, or load a sample list to see CartWise in
+            action.
+          </p>
+        </div>
+
+        <div id="list-groups" hidden>
+          <section class="item-group" aria-labelledby="todo-heading">
+            <h3 id="todo-heading">Still to buy</h3>
+            <ul id="todo-list" class="item-list"></ul>
+          </section>
+          <section class="item-group" aria-labelledby="done-heading">
+            <h3 id="done-heading">Purchased</h3>
+            <ul id="done-list" class="item-list"></ul>
+          </section>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <p>CartWise keeps your list in this browser with local storage. No account needed.</p>
+      </footer>
+    </div>
+    <script src="script.js" defer></script>
+  </body>
+</html>
